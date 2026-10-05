@@ -3,3 +3,4 @@ pandas
 pyspark
 apache-airflow
 pytest
+sqlalchemy
