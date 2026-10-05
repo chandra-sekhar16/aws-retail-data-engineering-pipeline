@@ -1,5 +1,3 @@
-import pandas as pd
-
 from ingestion import load_sales_data
 from transformation import transform_sales_data
 from loading import load_to_database
@@ -7,22 +5,20 @@ from loading import load_to_database
 
 def run_pipeline():
     """
-    Run the complete retail sales data pipeline.
+    Run the complete retail data pipeline.
     """
 
-    input_file = "data/sample_sales.csv"
-
-    # Step 1: Extract
-    sales_data = load_sales_data(input_file)
+    # Step 1: Ingest
+    df = load_sales_data("data/sample_sales.csv")
 
     # Step 2: Transform
-    transformed_data = transform_sales_data(sales_data)
+    transformed_df = transform_sales_data(df)
 
     # Step 3: Load
     database_url = "sqlite:///sales.db"
-    load_to_database(transformed_data, database_url)
+    load_to_database(transformed_df, database_url)
 
-    print("Retail sales data pipeline completed successfully.")
+    print("Pipeline completed successfully.")
 
 
 if __name__ == "__main__":
