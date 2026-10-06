@@ -55,3 +55,41 @@ Amazon Redshift
       |
       v
 SQL Analytics
+
+## Technologies
+
+- Python
+- Pandas
+- SQL
+- SQLite
+- PySpark
+- Amazon S3
+- AWS Glue
+- Amazon Redshift
+- Amazon Athena
+- Apache Airflow
+- AWS Lambda
+- AWS CloudWatch
+- Git
+- GitHub
+
+## Project Structure
+
+```text
+aws-retail-data-engineering-pipeline/
+│
+├── data/
+│   └── sample_sales.csv
+│
+├── src/
+│   ├── ingestion.py
+│   ├── transformation.py
+│   ├── loading.py
+│   └── pipeline.py
+│
+├── sql/
+│   └── create_tables.sql
+│
+├── requirements.txt
+├── .gitignore
+└── README.md
