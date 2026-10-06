@@ -1,167 +1,473 @@
 # AWS Retail Data Engineering Pipeline
 
-## Project Overview
+An end-to-end **AWS Data Engineering pipeline** that ingests retail sales data into Amazon S3, processes the data using AWS Glue, converts the dataset into Apache Parquet format, catalogs the processed data using AWS Glue Data Catalog, and performs SQL-based analytics using Amazon Athena.
 
-This project demonstrates an end-to-end retail data engineering pipeline using Python, SQL, and AWS-oriented data engineering concepts.
+---
 
-The project processes retail sales data, stores it in a relational database, and performs analytical queries to generate business insights.
+## 🚀 Project Overview
 
-## Architecture
+This project demonstrates a practical cloud-based data engineering workflow for processing retail sales data.
+
+The pipeline takes raw CSV data, stores it in Amazon S3, processes it using AWS Glue ETL, writes optimized Parquet output to a processed S3 location, registers the processed dataset in AWS Glue Data Catalog, and enables serverless analytics through Amazon Athena.
+
+### End-to-End Pipeline
 
 ```text
-Retail Sales Data
-       |
-       v
-   Python ETL
-       |
-       v
- Data Validation
-       |
-       v
- SQLite Database
-       |
-       v
-  SQL Analytics
-       |
-       v
- Business Insights
+Raw Retail CSV
+      |
+      v
+Amazon S3
+      |
+      v
+AWS Glue ETL
+      |
+      v
+Parquet Transformation
+      |
+      v
+S3 Processed Layer
+      |
+      v
+AWS Glue Data Catalog
+      |
+      v
+Amazon Athena
+      |
+      v
+Business Analytics
 ```
 
-## Technologies Used
+---
 
-* Python 3.14
-* SQL
-* SQLite
-* AWS Data Engineering Concepts
+## 🏗️ Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │   Retail Sales CSV  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     Amazon S3       │
+                    │    Raw Data Layer   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │      AWS Glue       │
+                    │      ETL Job        │
+                    │                     │
+                    │ retail-sales-etl-job│
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │       Parquet       │
+                    │  Processed Dataset  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     Amazon S3       │
+                    │   processed/ layer  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Glue Data Catalog │
+                    │                     │
+                    │ retail_sales_db     │
+                    │ retail_sales_       │
+                    │ processed           │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    Amazon Athena    │
+                    │    SQL Analytics    │
+                    └─────────────────────┘
+```
+
+---
+
+## 🛠️ Technologies Used
+
+| Technology                | Purpose                           |
+| ------------------------- | --------------------------------- |
+| **Amazon S3**             | Raw and processed data storage    |
+| **AWS Glue**              | ETL processing                    |
+| **AWS Glue Data Catalog** | Metadata and table management     |
+| **Amazon Athena**         | Serverless SQL analytics          |
+| **Apache Parquet**        | Optimized columnar storage        |
+| **SQL**                   | Analytical queries                |
+| **Git & GitHub**          | Version control and documentation |
+
+---
+
+## ☁️ AWS Resources
+
+### S3 Bucket
+
+```text
+aws-retail-data-engineering-chandu
+```
+
+### Raw Data
+
+```text
+s3://aws-retail-data-engineering-chandu/
+```
+
+### Processed Data
+
+```text
+s3://aws-retail-data-engineering-chandu/processed/
+```
+
+### AWS Glue Job
+
+```text
+retail-sales-etl-job
+```
+
+### Glue Database
+
+```text
+retail_sales_db
+```
+
+### Glue Source Table
+
+```text
+aws_retail_data_engineering_chandu
+```
+
+### Glue Processed Table
+
+```text
+retail_sales_processed
+```
+
+### Athena
+
+Amazon Athena is used to query the processed Parquet dataset using SQL without managing any database servers.
+
+---
+
+## 📂 S3 Data Layout
+
+```text
+aws-retail-data-engineering-chandu/
+│
+├── sample_sales.csv
+│
+├── processed/
+│   ├── run-...parquet
+│   └── run-...parquet
+│
+└── Unsaved/
+```
+
+The analytical dataset is stored under:
+
+```text
+s3://aws-retail-data-engineering-chandu/processed/
+```
+
+The dedicated `processed/` prefix separates the transformed Parquet data from the raw/source files.
+
+---
+
+## 📊 Source Dataset
+
+The retail sales dataset contains the following fields:
+
+| Column        | Data Type | Description             |
+| ------------- | --------- | ----------------------- |
+| `order_id`    | bigint    | Unique order identifier |
+| `order_date`  | string    | Order date              |
+| `customer_id` | string    | Customer identifier     |
+| `product`     | string    | Product name            |
+| `category`    | string    | Product category        |
+| `quantity`    | bigint    | Quantity purchased      |
+| `unit_price`  | double    | Price per unit          |
+| `region`      | string    | Sales region            |
+
+---
+
+## ⚙️ AWS Glue ETL
+
+### Job Configuration
+
+| Configuration | Value                  |
+| ------------- | ---------------------- |
+| Job Name      | `retail-sales-etl-job` |
+| Job Type      | Visual ETL             |
+| Glue Version  | 5.1                    |
+| Worker Type   | G.1X                   |
+| Output Format | Apache Parquet         |
+
+### Source
+
+```text
+s3://aws-retail-data-engineering-chandu/
+```
+
+### Target
+
+```text
+s3://aws-retail-data-engineering-chandu/processed/
+```
+
+The AWS Glue ETL job reads the raw retail sales data from Amazon S3 and writes the transformed dataset in Apache Parquet format.
+
+The job was successfully executed and generated Parquet output in the processed S3 location.
+
+---
+
+## 🗂️ AWS Glue Data Catalog
+
+The processed dataset is registered in the AWS Glue Data Catalog.
+
+### Database
+
+```text
+retail_sales_db
+```
+
+### Table
+
+```text
+retail_sales_processed
+```
+
+### Table Location
+
+```text
+s3://aws-retail-data-engineering-chandu/processed/
+```
+
+### Table Format
+
+```text
+Parquet
+```
+
+The Glue Data Catalog provides the metadata required by Amazon Athena to query the processed dataset.
+
+---
+
+## 🔎 Amazon Athena Analytics
+
+Amazon Athena is used to perform serverless SQL analytics on the processed Parquet data.
+
+### 1. Total Sales
+
+```sql
+SELECT
+    SUM(quantity * unit_price) AS total_sales
+FROM retail_sales_db.retail_sales_processed;
+```
+
+**Result:**
+
+```text
+₹10,06,400
+```
+
+---
+
+### 2. Sales by Region
+
+```sql
+SELECT
+    region,
+    SUM(quantity * unit_price) AS total_sales
+FROM retail_sales_db.retail_sales_processed
+GROUP BY region
+ORDER BY total_sales DESC;
+```
+
+**Result:**
+
+| Region |     Sales |
+| ------ | --------: |
+| South  | ₹4,92,400 |
+| West   | ₹1,90,000 |
+| North  | ₹1,84,000 |
+| East   | ₹1,40,000 |
+
+---
+
+### 3. Sales by Product
+
+```sql
+SELECT
+    product,
+    SUM(quantity * unit_price) AS total_sales
+FROM retail_sales_db.retail_sales_processed
+GROUP BY product
+ORDER BY total_sales DESC;
+```
+
+**Result:**
+
+| Product    |     Sales |
+| ---------- | --------: |
+| Laptop     | ₹4,60,000 |
+| Mobile     | ₹2,62,000 |
+| Monitor    | ₹1,92,000 |
+| Headphones |   ₹58,000 |
+| Keyboard   |   ₹20,000 |
+| Mouse      |   ₹14,400 |
+
+---
+
+### 4. Sales by Category
+
+```sql
+SELECT
+    category,
+    SUM(quantity * unit_price) AS total_sales
+FROM retail_sales_db.retail_sales_processed
+GROUP BY category
+ORDER BY total_sales DESC;
+```
+
+**Result:**
+
+| Category    |     Sales |
+| ----------- | --------: |
+| Electronics | ₹9,14,000 |
+| Accessories |   ₹92,400 |
+
+---
+
+### 5. Monthly Sales
+
+```sql
+SELECT
+    substr(order_date, 1, 7) AS month,
+    SUM(quantity * unit_price) AS total_sales
+FROM retail_sales_db.retail_sales_processed
+GROUP BY substr(order_date, 1, 7)
+ORDER BY month;
+```
+
+**Result:**
+
+| Month   |      Sales |
+| ------- | ---------: |
+| 2026-01 | ₹10,06,400 |
+
+---
+
+## 📈 Business Insights
+
+Based on the current sample dataset:
+
+| Metric                 |          Result |
+| ---------------------- | --------------: |
+| **Total Sales**        |  **₹10,06,400** |
+| **Orders Processed**   |          **10** |
+| **Top Region**         |       **South** |
+| **South Region Sales** |   **₹4,92,400** |
+| **Top Product**        |      **Laptop** |
+| **Laptop Sales**       |   **₹4,60,000** |
+| **Top Category**       | **Electronics** |
+| **Electronics Sales**  |   **₹9,14,000** |
+
+### Key Observations
+
+* South generated the highest regional sales.
+* Laptop was the highest-revenue product.
+* Electronics contributed the majority of total sales.
+* The processed Parquet dataset was successfully queried using Amazon Athena.
+* The complete pipeline successfully processed the retail sales dataset from raw CSV to analytical results.
+
+---
+
+## ✅ Pipeline Validation
+
+```text
+CSV Ingestion             ✅
+S3 Raw Storage             ✅
+AWS Glue ETL               ✅
+Parquet Conversion         ✅
+S3 Processed Storage       ✅
+Glue Data Catalog          ✅
+Athena Table               ✅
+Athena SQL Analytics       ✅
+Business Insights          ✅
+```
+
+---
+
+## 🎯 Data Engineering Skills Demonstrated
+
+* AWS S3
+* AWS Glue ETL
+* AWS Glue Data Catalog
+* Amazon Athena
+* Apache Parquet
+* SQL Analytics
+* ETL Pipeline Development
+* Cloud Data Lake Architecture
+* Raw and Processed Data Layers
+* Metadata Management
+* Data Transformation
+* Serverless Data Analytics
 * Git & GitHub
 
-## Project Structure
+---
 
-```text
-aws-retail-data-engineering-pipeline/
-|
-+-- data/
-|   +-- sales_data.csv
-|
-+-- sql/
-|   +-- create_tables.sql
-|   +-- analytics_queries.sql
-|
-+-- scripts/
-|
-+-- retail.db
-|
-+-- README.md
-```
+## 🔮 Future Enhancements
 
-## Database Schema
+The project can be extended into a production-oriented data platform by implementing:
 
-The `sales_data` table contains:
+* Incremental data processing
+* S3 partitioning
+* AWS Glue Job Bookmarks
+* Data quality validation
+* CloudWatch monitoring and alerts
+* IAM least-privilege policies
+* Scheduled Glue workflows
+* Event-driven processing
+* Amazon QuickSight dashboards
+* CI/CD for ETL pipelines
+* Additional retail datasets
+* Automated data ingestion
 
-| Column       | Description             |
-| ------------ | ----------------------- |
-| order_id     | Unique order identifier |
-| order_date   | Date of the order       |
-| customer_id  | Customer identifier     |
-| product      | Product name            |
-| category     | Product category        |
-| quantity     | Quantity purchased      |
-| unit_price   | Price per unit          |
-| region       | Sales region            |
-| total_amount | Total order amount      |
+---
 
-## SQL Analytics
+## 📸 Project Screenshots
 
-The project includes SQL queries for:
+Screenshots demonstrating the AWS pipeline will be added to this repository, including:
 
-1. Total sales
-2. Total orders
-3. Sales by region
-4. Sales by category
-5. Top products
-6. Monthly sales
-7. Average order value
-8. Customer sales
+* Amazon S3 raw data
+* AWS Glue ETL job
+* Successful Glue job execution
+* S3 processed Parquet files
+* AWS Glue Data Catalog
+* Amazon Athena queries
+* Athena analytical results
 
-## Current Analytics Results
+---
 
-Based on the sample dataset:
+## 💼 Resume Project Description
 
-| Metric             |      Result |
-| ------------------ | ----------: |
-| Total Sales        |     204,500 |
-| Total Orders       |           6 |
-| Top Region         |       South |
-| South Region Sales |     117,000 |
-| Top Category       | Electronics |
-| Electronics Sales  |     172,500 |
+**AWS Retail Data Engineering Pipeline**
 
-## How to Run
+> Developed an end-to-end AWS retail data engineering pipeline using Amazon S3, AWS Glue, Glue Data Catalog, Apache Parquet, and Amazon Athena. Implemented an ETL workflow to process raw CSV sales data into optimized Parquet format, cataloged the processed dataset, and performed SQL-based analytics for regional, product, category, and monthly sales insights.
 
-### 1. Clone the repository
+---
 
-```bash
-git clone <your-github-repository-url>
-cd aws-retail-data-engineering-pipeline
-```
+## 👨‍💻 Author
 
-### 2. Create the database
+**Chandra Sekhar**
 
-```bash
-python -c "import sqlite3; conn=sqlite3.connect('retail.db'); conn.executescript(open('sql/create_tables.sql').read()); conn.commit(); conn.close(); print('Database and table created successfully')"
-```
+**Data Engineering | AWS | SQL | ETL | Cloud Data Platforms**
 
-### 3. Load sample data
+---
 
-```bash
-python -c "import sqlite3; conn=sqlite3.connect('retail.db'); conn.executemany('INSERT INTO sales_data VALUES (?,?,?,?,?,?,?,?,?)', [(1001,'2026-01-05','C001','Laptop','Electronics',1,75000,'South',75000),(1002,'2026-01-10','C002','Phone','Electronics',2,30000,'East',60000),(1003,'2026-02-03','C003','Chair','Furniture',4,5000,'West',20000),(1004,'2026-02-15','C001','Desk','Furniture',1,12000,'South',12000),(1005,'2026-03-01','C004','Headphones','Electronics',3,2500,'North',7500),(1006,'2026-03-12','C005','Monitor','Electronics',2,15000,'South',30000)]); conn.commit(); conn.close(); print('Sample sales data loaded successfully')"
-```
-
-### 4. Run Analytics
-
-The SQL queries are available in:
-
-```text
-sql/analytics_queries.sql
-```
-
-## Future AWS Architecture
-
-The local prototype can be extended into an AWS-based production pipeline:
-
-```text
-Amazon S3
-   |
-   v
-AWS Glue
-   |
-   v
-Amazon Redshift
-   |
-   v
-Amazon QuickSight
-```
-
-### AWS Services
-
-* **Amazon S3** - Data lake storage
-* **AWS Glue** - ETL and data catalog
-* **Amazon Redshift** - Data warehouse
-* **Amazon QuickSight** - Business intelligence dashboards
-
-## Key Skills Demonstrated
-
-* Python data processing
-* SQL analytics
-* Relational database design
-* ETL pipeline concepts
-* Data validation
-* Business analytics
-* AWS data engineering architecture
-* Git/GitHub project organization
-
-## Author
-
-**Data Engineering Portfolio Project**
-
-This project was created to demonstrate practical data engineering and analytics skills.
+⭐ If you found this project useful, feel free to explore the repository and connect with me.
