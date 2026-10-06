@@ -2,175 +2,166 @@
 
 ## Project Overview
 
-End-to-end retail data engineering pipeline built using Python, Pandas, SQL and AWS data engineering services.
+This project demonstrates an end-to-end retail data engineering pipeline using Python, SQL, and AWS-oriented data engineering concepts.
 
-The project demonstrates data ingestion, transformation, data quality validation and loading into an analytical database.
+The project processes retail sales data, stores it in a relational database, and performs analytical queries to generate business insights.
 
 ## Architecture
 
-CSV / JSON Data
-        |
-        v
-       S3
-        |
-        v
-   AWS Glue
-   PySpark
-        |
-        v
-Data Quality & Transformation
-        |
-        v
-   Curated S3
-        |
-        v
-   Redshift
-        |
-        v
- SQL Analytics
+```text
+Retail Sales Data
+       |
+       v
+   Python ETL
+       |
+       v
+ Data Validation
+       |
+       v
+ SQLite Database
+       |
+       v
+  SQL Analytics
+       |
+       v
+ Business Insights
+```
 
-## Technologies
+## Technologies Used
 
-- Python
-- Pandas
-- SQL
-- PySpark
-- AWS S3
-- AWS Glue
-- Amazon Redshift
-- Amazon Athena
-- Apache Airflow
-- AWS Lambda
-- Amazon CloudWatch
-- Git
-- GitHub
+* Python 3.14
+* SQL
+* SQLite
+* AWS Data Engineering Concepts
+* Git & GitHub
 
 ## Project Structure
 
+```text
 aws-retail-data-engineering-pipeline/
-├── data/
-│   └── sample_sales.csv
-├── src/
-│   ├── ingestion.py
-│   ├── transformation.py
-│   ├── loading.py
-│   └── pipeline.py
-├── sql/
-│   └── create_tables.sql
-├── requirements.txt
-├── README.md
-├── .gitignore
-└── LICENSE
+|
++-- data/
+|   +-- sales_data.csv
+|
++-- sql/
+|   +-- create_tables.sql
+|   +-- analytics_queries.sql
+|
++-- scripts/
+|
++-- retail.db
+|
++-- README.md
+```
 
-## Pipeline Steps
+## Database Schema
 
-### 1. Data Ingestion
+The `sales_data` table contains:
 
-The pipeline reads retail sales data from CSV files using Pandas.
+| Column       | Description             |
+| ------------ | ----------------------- |
+| order_id     | Unique order identifier |
+| order_date   | Date of the order       |
+| customer_id  | Customer identifier     |
+| product      | Product name            |
+| category     | Product category        |
+| quantity     | Quantity purchased      |
+| unit_price   | Price per unit          |
+| region       | Sales region            |
+| total_amount | Total order amount      |
 
-### 2. Data Transformation
+## SQL Analytics
 
-The transformation layer:
+The project includes SQL queries for:
 
-- Removes duplicate records
-- Converts order dates to datetime
-- Calculates total sales amount
-- Removes invalid quantity and price values
-- Sorts records by order date
+1. Total sales
+2. Total orders
+3. Sales by region
+4. Sales by category
+5. Top products
+6. Monthly sales
+7. Average order value
+8. Customer sales
 
-### 3. Data Loading
+## Current Analytics Results
 
-The transformed dataset is loaded into a relational database.
+Based on the sample dataset:
 
-For local development, SQLite is used as the target database.
+| Metric             |      Result |
+| ------------------ | ----------: |
+| Total Sales        |     204,500 |
+| Total Orders       |           6 |
+| Top Region         |       South |
+| South Region Sales |     117,000 |
+| Top Category       | Electronics |
+| Electronics Sales  |     172,500 |
 
-## Sample Data
+## How to Run
 
-The sample dataset contains:
+### 1. Clone the repository
 
-- Order ID
-- Order Date
-- Customer ID
-- Product
-- Category
-- Quantity
-- Unit Price
-- Region
+```bash
+git clone <your-github-repository-url>
+cd aws-retail-data-engineering-pipeline
+```
 
-A derived total_amount column is calculated during transformation.
+### 2. Create the database
 
-## Data Quality
+```bash
+python -c "import sqlite3; conn=sqlite3.connect('retail.db'); conn.executescript(open('sql/create_tables.sql').read()); conn.commit(); conn.close(); print('Database and table created successfully')"
+```
 
-The pipeline applies basic data quality checks including:
+### 3. Load sample data
 
-- Duplicate record removal
-- Positive quantity validation
-- Positive unit price validation
-- Date type conversion
-- Derived sales amount validation
+```bash
+python -c "import sqlite3; conn=sqlite3.connect('retail.db'); conn.executemany('INSERT INTO sales_data VALUES (?,?,?,?,?,?,?,?,?)', [(1001,'2026-01-05','C001','Laptop','Electronics',1,75000,'South',75000),(1002,'2026-01-10','C002','Phone','Electronics',2,30000,'East',60000),(1003,'2026-02-03','C003','Chair','Furniture',4,5000,'West',20000),(1004,'2026-02-15','C001','Desk','Furniture',1,12000,'South',12000),(1005,'2026-03-01','C004','Headphones','Electronics',3,2500,'North',7500),(1006,'2026-03-12','C005','Monitor','Electronics',2,15000,'South',30000)]); conn.commit(); conn.close(); print('Sample sales data loaded successfully')"
+```
 
-## Local Pipeline Execution
+### 4. Run Analytics
 
-Install dependencies:
+The SQL queries are available in:
 
-pip install -r requirements.txt
+```text
+sql/analytics_queries.sql
+```
 
-Run the pipeline:
+## Future AWS Architecture
 
-python src/pipeline.py
+The local prototype can be extended into an AWS-based production pipeline:
 
-The pipeline loads the sample data, performs transformations and creates the local SQLite database.
+```text
+Amazon S3
+   |
+   v
+AWS Glue
+   |
+   v
+Amazon Redshift
+   |
+   v
+Amazon QuickSight
+```
 
-## SQL Schema
+### AWS Services
 
-The SQL schema is available in:
+* **Amazon S3** - Data lake storage
+* **AWS Glue** - ETL and data catalog
+* **Amazon Redshift** - Data warehouse
+* **Amazon QuickSight** - Business intelligence dashboards
 
-sql/create_tables.sql
+## Key Skills Demonstrated
 
-## AWS Target Architecture
-
-The project is designed to be extended into an AWS-based data engineering platform using:
-
-- Amazon S3 for data storage
-- AWS Glue for ETL processing
-- PySpark for distributed transformations
-- Amazon Redshift for analytical workloads
-- Amazon Athena for SQL-based querying
-- Apache Airflow for orchestration
-- AWS Lambda for event-driven processing
-- Amazon CloudWatch for monitoring
-
-## Future Enhancements
-
-- Add AWS S3 ingestion
-- Implement AWS Glue PySpark jobs
-- Add Redshift integration
-- Add Apache Airflow DAG
-- Add automated data quality tests
-- Add CloudWatch monitoring
-- Add analytical SQL queries
-- Add CI/CD using GitHub Actions
-
-## Project Goals
-
-This project demonstrates practical data engineering concepts including:
-
-- ETL pipeline development
-- Data transformation
-- Data quality
-- SQL analytics
-- Cloud data architecture
-- AWS data engineering
-- Pipeline orchestration
-
-## Disclaimer
-
-This is a personal portfolio project using synthetic sample data. No confidential company data or proprietary code is included.
+* Python data processing
+* SQL analytics
+* Relational database design
+* ETL pipeline concepts
+* Data validation
+* Business analytics
+* AWS data engineering architecture
+* Git/GitHub project organization
 
 ## Author
 
-Chandra Sekhar
+**Data Engineering Portfolio Project**
 
-Cloud Data Engineer | AWS | PySpark | Python | SQL
-
-GitHub: https://github.com/chandra-sekhar16
+This project was created to demonstrate practical data engineering and analytics skills.
