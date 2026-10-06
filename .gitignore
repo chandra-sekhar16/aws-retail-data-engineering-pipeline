@@ -218,5 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+<<<<<<< HEAD
 
+=======
+>>>>>>> bcd71ee (Ignore local SQLite database)
 sales.db
