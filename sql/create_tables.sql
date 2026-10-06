@@ -1,5 +1,5 @@
-CREATE TABLE sales_data (
-    order_id INTEGER,
+CREATE TABLE IF NOT EXISTS sales_data (
+    order_id INTEGER PRIMARY KEY,
     order_date DATE,
     customer_id VARCHAR(50),
     product VARCHAR(100),
